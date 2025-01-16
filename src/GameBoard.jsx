@@ -23,7 +23,20 @@ async function fetchImage(url){
 function GameBoard(props){
     const names=props.names;
     const urls=props.urls;
+    const score=props.score;
+    const setScore=props.setScore;
+    const bestScore=props.bestScore;
+    const setBestScore=props.setBestScore;
+
     const [images, setImages]=useState([]);
+
+    const handleClick= ()=>{
+        console.log("Card clicked");
+        setScore(s=>s+1);
+        if(score>=bestScore){
+            setBestScore(_=>score);
+        }
+    }
 
     useEffect(() => {
         const fetchAllImages = async () => {
@@ -44,6 +57,10 @@ function GameBoard(props){
 }
 GameBoard.propTypes={
     names: propTypes.array.isRequired,
-    urls: propTypes.array.isRequired
+    urls: propTypes.array.isRequired,
+    score: propTypes.number.isRequired,
+    setScore: propTypes.func.isRequired,
+    bestScore: propTypes.number.isRequired,
+    setBestScore: propTypes.func.isRequired
 }
 export default GameBoard;
