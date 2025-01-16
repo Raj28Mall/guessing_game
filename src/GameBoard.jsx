@@ -2,8 +2,6 @@ import React, {useState, useEffect} from 'react';
 import propTypes from 'prop-types';
 import Card from './Card';
 
-const CARDSINROW=5;
-
 async function fetchImage(url){
     try{
         const response=await fetch(url);
@@ -11,7 +9,7 @@ async function fetchImage(url){
             throw new Error('Network repsonse during image retreival was not ok');
         }
         else{
-            const data=await response.json();
+            const data=await response.json();   
             return data.sprites.front_default;
         }
     }
@@ -29,12 +27,21 @@ function GameBoard(props){
     const setBestScore=props.setBestScore;
 
     const [images, setImages]=useState([]);
+    const [clicked, setClicked]=useState([]);  
 
-    const handleClick= ()=>{
-        console.log("Card clicked");
-        setScore(s=>s+1);
-        if(score>=bestScore){
-            setBestScore(_=>score);
+    function handleClick(index){
+        if(clicked.includes(index)){
+            if(bestScore<score){
+                setBestScore(score);
+            }
+            console.log("Card clicked twice and you lose");
+            setScore(0);
+            setClicked([]);
+        }
+        else{
+            console.log(`${index+1} Card Clicked and Score updated`);
+            setScore(score+1);
+            setClicked(c=>[...c, index]);
         }
     }
 
@@ -48,9 +55,9 @@ function GameBoard(props){
       }, [urls]);
       
     return(
-            <div className={`game-board w-[90vw] grid grid-cols-5 gap-x-28 gap-y-10 h-[80vh]`}>
+            <div className='game-board w-[90vw] grid grid-cols-5 gap-x-28 gap-y-10 h-[80vh]'>
             {names.map((name, index)=>(
-                <Card key={index} name={name} image={images[index]}/>
+                <Card onClick={()=>handleClick(index)} key={index} name={name} image={images[index]} id={index+1}/>
             ))}
             </div>
     );
