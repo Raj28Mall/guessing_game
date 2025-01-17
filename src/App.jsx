@@ -5,53 +5,48 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function fetchData(setNames, setUrls) {
+async function fetchData(setData) {
   try {
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${getRandomNumber(1, 100)}`
-    );
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${getRandomNumber(1, 100)}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
-    } else {
-      const data = await response.json();
-      data.results.forEach((pokemon) => {
-        setNames((n) => [...n, pokemon.name]);
-        setUrls((u) => [...u, pokemon.url]);
-      });
     }
+    const result = await response.json();
+    const formattedData = result.results.map((pokemon) => ({
+      name: pokemon.name,
+      url: pokemon.url,
+    }));
+    return formattedData;
   } catch (error) {
-    console.error(
-      "There has been a problem with your fetch operation:",
-      error
-    );
+    console.error("There has been a problem with your fetch operation:", error);
   }
 }
-
-function App() {
-  const [names, setNames] = useState([]);
-  const [urls, setUrls] = useState([]);
+function App(){
+  const [data, setData] = useState([]);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
-    fetchData(setNames, setUrls);
-
-    return () => {
-      setNames([]);
-      setUrls([]);
-    };
+    const getData = async () => {
+      const abcd = await fetchData(setData);
+      console.log("dog",abcd);
+      setData(abcd);
+    }
+  getData();
   }, []);
+  
+  console.log("cat",data);
+
 
   return (
-    <body className="min-w-full min-h-screen bg-slate-700 flex flex-col justify-center items-center pr-16">
+    <div className="min-w-full min-h-screen bg-slate-700 flex flex-col justify-center items-center pr-16">
       <h1 className="header absolute top-0 text-center text-6xl font-bold text-white">Pokemon Guessing Game</h1>
       <p className="absolute top-5 right-10 text-center text-lg font-bold space-x-10 text-white">
         <span>Score: {score}</span>
         <span>Best Score: {bestScore}</span>
       </p>
-      <GameBoard names={names} urls={urls} score={score} setScore={setScore} bestScore={bestScore} setBestScore={setBestScore} />
-    </body>
+      <GameBoard data={data} score={score} setScore={setScore} bestScore={bestScore} setBestScore={setBestScore} />
+    </div>
   );
 }
-
 export default App;

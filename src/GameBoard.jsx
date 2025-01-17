@@ -18,13 +18,9 @@ async function fetchImage(url){
     }
 }
 
-function GameBoard(props){
-    const names=props.names;
-    const urls=props.urls;
-    const score=props.score;
-    const setScore=props.setScore;
-    const bestScore=props.bestScore;
-    const setBestScore=props.setBestScore;
+function GameBoard({data, score, setScore, bestScore, setBestScore}){
+
+    console.log("elephant",data);   
 
     const [images, setImages]=useState([]);
     const [clicked, setClicked]=useState([]);  
@@ -34,37 +30,31 @@ function GameBoard(props){
             if(bestScore<score){
                 setBestScore(score);
             }
-            console.log("Card clicked twice and you lose");
             setScore(0);
             setClicked([]);
         }
         else{
-            console.log(`${index+1} Card Clicked and Score updated`);
             setScore(score+1);
             setClicked(c=>[...c, index]);
         }
     }
 
     useEffect(() => {
+    
         const fetchAllImages = async () => {
-          const images = await Promise.all(urls.map((url) => fetchImage(url)));
-          setImages(images); 
+            const images = await Promise.all(data.map((item) => fetchImage(item.url)));
+            setImages(images);
         };
-      
+    
         fetchAllImages();
-      }, [urls]);
-      
-    return(
-            <div className='game-board w-[90vw] grid grid-cols-5 gap-x-28 gap-y-10 h-[80vh]'>
-            {names.map((name, index)=>(
-                <Card onClick={()=>handleClick(index)} key={index} name={name} image={images[index]} id={index+1}/>
-            ))}
-            </div>
-    );
+    }, [data]);
+    
+    
+    return ( <div className="game-board w-[90vw] grid grid-cols-5 gap-x-28 gap-y-10 h-[80vh]"> {images.length === data.length && data.length > 0 && data.map((item, index) => ( <Card onClick={() => handleClick(index)} key={index} name={item.name} image={images[index]} id={index + 1} /> ))} </div> );
+    
 }
 GameBoard.propTypes={
-    names: propTypes.array.isRequired,
-    urls: propTypes.array.isRequired,
+    data:propTypes.array.isRequired,
     score: propTypes.number.isRequired,
     setScore: propTypes.func.isRequired,
     bestScore: propTypes.number.isRequired,
