@@ -10,6 +10,7 @@ async function fetchImage(url){
         }
         else{
             const data=await response.json();   
+            console.log(data);
             return data.sprites.front_default;
         }
     }
@@ -20,7 +21,7 @@ async function fetchImage(url){
 
 function GameBoard({data, score, setScore, bestScore, setBestScore}){
 
-    console.log("elephant",data);   
+    console.log("elephant", data);
 
     const [images, setImages]=useState([]);
     const [clicked, setClicked]=useState([]);  
@@ -40,13 +41,14 @@ function GameBoard({data, score, setScore, bestScore, setBestScore}){
     }
 
     useEffect(() => {
-    
         const fetchAllImages = async () => {
             const images = await Promise.all(data.map((item) => fetchImage(item.url)));
             setImages(images);
         };
-    
-        fetchAllImages();
+
+        if (data.length > 0) {
+            fetchAllImages();
+        }
     }, [data]);
     
     

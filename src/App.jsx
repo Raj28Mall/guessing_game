@@ -5,7 +5,7 @@ function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function fetchData(setData) {
+async function fetchData() {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${getRandomNumber(1, 100)}`);
     if (!response.ok) {
@@ -28,7 +28,7 @@ function App(){
 
   useEffect(() => {
     const getData = async () => {
-      const abcd = await fetchData(setData);
+      const abcd = await fetchData();
       console.log("dog",abcd);
       setData(abcd);
     }
